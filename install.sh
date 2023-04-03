@@ -8,14 +8,18 @@ then
 	echo -e "|          The agent itself will NOT be running as root but instead under its own non-privileged user\n|"
 	exit 1
 fi
-if [ -z "$1" ]
+
+token={{ACCESS_TOKEN}}
+playground_api_url=""
+
+if [ -z "$token" ]
 then
 	echo -e "|   Error: Execute Autoheal agent token is required\n|"
-	echo -e "|   Usage: bash $1 'token'\n|"
+	echo -e "|   Usage: bash $token 'token'\n|"
 	exit 1
 fi
 
-curl -X POST "https://webhook.site/bc717444-1041-4ef3-9e87-b25062003db7?id=$1"
+curl -X POST "$playground_api_url/playground/verifyAgentInstallation" -H "Content-Type: application/json" -d '{"accessToken": "'"$token"'"}' > /dev/null 2>&1
 
 if [ ! -n "$(command -v crontab)" ]
 then
@@ -94,7 +98,7 @@ mkdir -p /etc/execute_autoheal/log
 echo -e "|   Downloading agent.sh to /etc/execute_autoheal\n|\n|   + $(wget -nv -o /dev/stdout -O /etc/execute_autoheal/agent.sh --no-check-certificate https://gist.githubusercontent.com/ayshptk/eeb2f32b9ff670a42d55231f8ddc15c0/raw/20670995c1d30a1a6bfdef5fd51ceabc30939d1d/agenst.sh)"
 if [ -f /etc/execute_autoheal/agent.sh ]
 then
-	echo "$1" > /etc/execute_autoheal/token.conf
+	echo "$token" > /etc/execute_autoheal/token.conf
     if [ -f /etc/execute_autoheal/token.conf ]
     then
         auth=($(cat /etc/execute_autoheal/token.conf))

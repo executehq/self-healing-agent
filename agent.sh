@@ -9,7 +9,8 @@ else
 	echo "Error: File /etc/execute_autoheal/token.conf is missing."
 	exit 1
 fi
-API_ENDPOINT="https://typedwebhook.tools/webhook/578aa581-2e13-4fc8-9901-8026dd87657f"
+API_ENDPOINT=""
+
 function prep ()
 {
 	echo "$1" | sed -e 's/^ *//g' -e 's/ *$//g' | sed -n '1 p'
@@ -211,9 +212,9 @@ data_post="{
 }"
 if [ -n "$(command -v timeout)" ]
 then
-	timeout -s SIGKILL 30 wget -q -o /dev/null -O /etc/execute_autoheal/log/agent.log -T 25 --header "Content-Type: application/json" --post-data "$data_post" --no-check-certificate "$API_ENDPOINT"
+	timeout -s SIGKILL 30 wget -q -o /dev/null -O /etc/execute_autoheal/log/agent.log -T 25 --header "Content-Type: application/json" --post-data "$data_post" --no-check-certificate "$API_ENDPOINT/playground/report"
 else
-	wget -q -o /dev/null -O /etc/execute_autoheal/log/agent.log -T 25 --header='Content-Type: application/json' --post-data "$data_post" --no-check-certificate "$API_ENDPOINT"
+	wget -q -o /dev/null -O /etc/execute_autoheal/log/agent.log -T 25 --header='Content-Type: application/json' --post-data "$data_post" --no-check-certificate "$API_ENDPOINT/playground/report"
 	wget_pid=$!
 	wget_counter=0
 	wget_timeout=30
